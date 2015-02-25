@@ -1,4 +1,4 @@
-//   2/17/15 submittion commit
+//   2/24/15 commit
 
 #ifndef _SPRITE_
 #define _SPRITE_

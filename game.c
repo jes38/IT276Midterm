@@ -1,4 +1,4 @@
-//   2/17/15 submittion commit
+//   2/24/15 commit
 
 #include <stdlib.h>
 #include "SDL.h"
@@ -45,7 +45,8 @@ int main(int argc, char *argv[])
   tile = LoadSprite("images/32_32_16_2sprite.png",32,32);
   getCoordinatesFromFile(&tx, &ty,"config.ini");
   fprintf(stdout,"x and y: (%i, %i)\n",tx,ty);
-  addCoordinateToFile("config.ini",7,11);
+  //addCoordinateToFile("config.ini",7,11);
+  /*
   if(tile != NULL)
   {
         for(i = 0;i < 12;i++)
@@ -53,17 +54,20 @@ int main(int argc, char *argv[])
             DrawSprite(tile,buffer,(i * tile->w) + tx,ty,0);
         }
   }
+  */
   done = 0;
   do
   {
     ResetBuffer ();
+	moveAllEnts();
     DrawMouse();
     NextFrame();
     SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
     if(SDL_GetMouseState(&mx,&my))
     {
-      DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0); 
+      //DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0);
+		spTower(mx,my,0);
     }
     if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
@@ -73,7 +77,8 @@ int main(int argc, char *argv[])
 
 void CleanUpAll()
 {
-  CloseSprites();
+	freeAllEnts();
+	CloseSprites();
   /*any other cleanup functions can be added here*/ 
 }
 

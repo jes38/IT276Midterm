@@ -1,4 +1,4 @@
-//   2/17/15 submittion commit
+//   2/24/15 commit
 
 #include <string.h>
 #include <stdlib.h>
@@ -17,6 +17,7 @@ struct
 SDL_Surface *screen; /*pointer to the draw buffer*/
 SDL_Surface *buffer; /*pointer to the background image buffer*/
 SDL_Surface *videobuffer; /*pointer to the actual video surface*/
+//SDL_Surface *entLayer; /*my entity layer*/
 SDL_Rect Camera; /*x & y are the coordinates for the background map, w and h are of the screen*/
 Uint32 NOW;					/*the current time since program started*/
 
@@ -96,7 +97,17 @@ void Init_Graphics()
         exit(1);
 	  }
     buffer = SDL_DisplayFormat(temp);
+	SDL_FreeSurface(temp);
+	/*
+	temp = SDL_CreateRGBSurface(Vflags, 2048, 768, S_Data.depth,rmask, gmask,bmask,amask);
+    if(temp == NULL)
+	  {
+        fprintf(stderr,"Couldn't initialize Video buffer: %s\n", SDL_GetError());
+        exit(1);
+	  }
+    entLayer = SDL_DisplayFormat(temp);
     SDL_FreeSurface(temp);
+	*/
     Camera.x = 0;
     Camera.y = 0;
     Camera.w = screen->w;/*we want to make sure that our camera is the same size of the video screen*/
