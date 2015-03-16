@@ -17,11 +17,15 @@ int getImagePathFromFile(char *filepath,char * filename);
 int getCoordinatesFromFile(int *x, int *y,char * filename);
 void addCoordinateToFile(char *filepath,int x, int y);
 
+int ECON;
+int LIVES;
 
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
 int main(int argc, char *argv[])
 {
+  int doOnce = 0;
+  
   SDL_Surface *temp = NULL;
   SDL_Surface *bg;
   Sprite *tile;
@@ -55,20 +59,42 @@ int main(int argc, char *argv[])
         }
   }
   */
+
+  ECON = 20;
+  LIVES = 50;
+
   done = 0;
   do
   {
     ResetBuffer ();
+	update();
 	moveAllEnts();
     DrawMouse();
     NextFrame();
     SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
-    if(SDL_GetMouseState(&mx,&my))
-    {
-      //DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0);
-		spTower(mx,my,0);
-    }
+
+	if(doOnce == 0)
+	{
+		if(SDL_GetMouseState(&mx,&my))
+		{
+			//DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0);
+			//spTower(mx,my,0,1);
+			doOnce = 1;
+		}
+		if(keys[SDLK_SPACE])
+		{
+			//start a wave
+			if(waveInProg == 0){startWave(15,2,20);}
+			doOnce = 1;
+		}
+		if(keys[SDLK_1]){spTower(mx,my,0,1); doOnce = 1;}
+		if(keys[SDLK_2]){spTower(mx,my,0,2); doOnce = 1;}
+		if(keys[SDLK_3]){spTower(mx,my,0,3); doOnce = 1;}
+		if(keys[SDLK_4]){spTower(mx,my,0,4); doOnce = 1;}
+	}
+	if(keys[SDLK_a]){doOnce = 0;}
+
     if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
   exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/
