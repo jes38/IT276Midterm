@@ -19,6 +19,8 @@ void addCoordinateToFile(char *filepath,int x, int y);
 
 int ECON;
 int LIVES;
+int LEVEL;
+int ROTATION;
 
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
@@ -60,15 +62,16 @@ int main(int argc, char *argv[])
   }
   */
 
-  ECON = 20;
+  ECON = 200; //start with 20
   LIVES = 50;
+  LEVEL = 1;
+  ROTATION = 0;
 
   done = 0;
   do
   {
     ResetBuffer ();
 	update();
-	moveAllEnts();
     DrawMouse();
     NextFrame();
     SDL_PumpEvents();
@@ -80,20 +83,31 @@ int main(int argc, char *argv[])
 		{
 			//DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0);
 			//spTower(mx,my,0,1);
-			doOnce = 1;
+			//doOnce = 1;
 		}
 		if(keys[SDLK_SPACE])
 		{
 			//start a wave
-			if(waveInProg == 0){startWave(15,2,20);}
+			int bloonNum;
+			if(waveInProg == 0)
+			{
+				bloonNum = LEVEL * 20;
+				startWave(15,3,bloonNum);
+			}
 			doOnce = 1;
 		}
 		if(keys[SDLK_1]){spTower(mx,my,0,1); doOnce = 1;}
 		if(keys[SDLK_2]){spTower(mx,my,0,2); doOnce = 1;}
 		if(keys[SDLK_3]){spTower(mx,my,0,3); doOnce = 1;}
 		if(keys[SDLK_4]){spTower(mx,my,0,4); doOnce = 1;}
+		if(keys[SDLK_TAB])
+		{
+			ROTATION = ROTATION + 45;
+			if (ROTATION == 360){ROTATION = 0;}
+			doOnce = 1;
+		}
 	}
-	if(keys[SDLK_a]){doOnce = 0;}
+	if(keys[SDLK_1]==0 && keys[SDLK_2]==0 && keys[SDLK_3]==0 && keys[SDLK_4]==0 && keys[SDLK_SPACE]==0 && keys[SDLK_TAB]==0){doOnce = 0;}
 
     if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);

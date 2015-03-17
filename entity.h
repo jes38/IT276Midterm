@@ -16,6 +16,8 @@ typedef struct ENTITY_T
 	int dir;
 	int health;
 	int type;
+	int colliding;
+	int size;
 
 	Sprite *sprite;
 
