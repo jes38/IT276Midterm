@@ -48,7 +48,6 @@
 #define Cyan_        0x00FFFF
 #define Magenta_     0xFF00FF
 
-
 /*color constants:*/
 enum colors {Red = 1,Green = 2,Blue = 3,Yellow = 4,Orange = 5,Violet = 6,Brown = 7,Grey = 8,DarkRed = 9,DarkGreen = 10,
                DarkBlue = 11,DarkYellow = 12,DarkOrange = 13,DarkViolet = 14,DarkBrown = 15,DarkGrey = 16,LightRed =17,

@@ -44,11 +44,13 @@ void Move_Ent(Entity *thisEnt, int xAmnt, int yAmnt);
 void spBloon(int type);
 void spBullet(int towerX, int towerY, int dir, int type);
 void spTower(int towerX, int towerY, int dir, int type);
+void spDumb();
 
 //entity think functions
 void towerThink(Entity *thatEnt);
 void bulletThink(Entity *thatEnt);
 void bloonThink(Entity *thatEnt);
+void dumbThink(Entity *thatEnt);
 
 //scripting
 void startWave(int SpawnRate, int lvl2mix, int numBloons);
@@ -59,5 +61,6 @@ int bloonsSpawned;
 int waitTime;
 
 void update();
+void DrawUI();
 
 #endif

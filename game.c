@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
   SDL_Surface *temp = NULL;
   SDL_Surface *bg;
   Sprite *tile;
+
+  Sprite *towerDumb;
+
   int done;
   int keyn;
   int i;
@@ -62,10 +65,17 @@ int main(int argc, char *argv[])
   }
   */
 
-  ECON = 200; //start with 20
-  LIVES = 50;
-  LEVEL = 1;
-  ROTATION = 0;
+  //dummy tower for UI
+  towerDumb = LoadSprite("images/32_32_16_2sprite.png",32,32);
+  DrawSprite(towerDumb,buffer,942,22,0);
+
+  //spawn the dummy bullet
+  spDumb();
+
+  ECON = 30; //players resources
+  LIVES = 50; //lives before game over
+  LEVEL = 1; //what level the player is on
+  ROTATION = 0; //rotation that next tower placed will have
 
   done = 0;
   do
@@ -73,6 +83,7 @@ int main(int argc, char *argv[])
     ResetBuffer ();
 	update();
     DrawMouse();
+	DrawUI();
     NextFrame();
     SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
@@ -81,9 +92,7 @@ int main(int argc, char *argv[])
 	{
 		if(SDL_GetMouseState(&mx,&my))
 		{
-			//DrawSprite(tile,buffer,(mx /32) * 32,(my /32) * 32,0);
-			//spTower(mx,my,0,1);
-			//doOnce = 1;
+			
 		}
 		if(keys[SDLK_SPACE])
 		{
@@ -96,10 +105,14 @@ int main(int argc, char *argv[])
 			}
 			doOnce = 1;
 		}
+
+		//spawn a tower
 		if(keys[SDLK_1]){spTower(mx,my,0,1); doOnce = 1;}
 		if(keys[SDLK_2]){spTower(mx,my,0,2); doOnce = 1;}
 		if(keys[SDLK_3]){spTower(mx,my,0,3); doOnce = 1;}
 		if(keys[SDLK_4]){spTower(mx,my,0,4); doOnce = 1;}
+
+		//start a wave
 		if(keys[SDLK_TAB])
 		{
 			ROTATION = ROTATION + 45;
@@ -109,6 +122,7 @@ int main(int argc, char *argv[])
 	}
 	if(keys[SDLK_1]==0 && keys[SDLK_2]==0 && keys[SDLK_3]==0 && keys[SDLK_4]==0 && keys[SDLK_SPACE]==0 && keys[SDLK_TAB]==0){doOnce = 0;}
 
+	if(LIVES == 0)done = 1;
     if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
   exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/

@@ -27,6 +27,23 @@ ScreenData  S_Data;
 
 Sprite *Msprite;
 
+SDL_Surface *message;
+TTF_Font *font;
+SDL_Color textColor;
+void TTF_init()
+{
+	font = NULL;
+	message = NULL;
+	textColor.b = 255;
+	textColor.g = 255;
+	textColor.r = 255;
+
+	font = TTF_OpenFont( "SigmarOne.ttf", 28 );
+	if (font == NULL)printf("font did not load: %s\n",SDL_GetError());
+
+	message = TTF_RenderText_Solid( font, "Level: ", textColor );
+}
+
 void Init_Graphics()
 {
     Uint32 Vflags =  SDL_ANYFORMAT;
@@ -114,8 +131,10 @@ void Init_Graphics()
     Camera.h = screen->h;
     SDL_ShowCursor(SDL_DISABLE);/*don't show the mouse */
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
-}
 
+	TTF_Init();
+	TTF_init();
+}
 
 void ResetBuffer()
 {

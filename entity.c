@@ -13,6 +13,10 @@ extern int LIVES;
 extern int LEVEL;
 extern int ROTATION;
 
+extern SDL_Surface *message;
+extern TTF_Font *font;
+extern SDL_Color textColor;
+
 Entity *initEnt(void)  //place entity in entList
 {
 	int i = 0;
@@ -95,7 +99,7 @@ void freeAllEnts()  //free all entities
 /* Spawn specific entities */
 //
 
-void spBloon(int type)
+void spBloon(int type) //spawn a bloon of type 1 or 2
 {
 	Entity *bloon;
 
@@ -104,12 +108,12 @@ void spBloon(int type)
 	
 	if (type == 1)
 	{
-		bloon = Spawn_Ent(700, 10, 0, 1, 0, bloonSprite1, type, 50);
+		bloon = Spawn_Ent(700, 10, 0, 1, 0, bloonSprite1, 1, 50);
 		bloon->think = bloonThink;
 	}
 	else if (type == 2)
 	{
-		bloon = Spawn_Ent(700, 10, 0, 1, 0, bloonSprite2, type, 50);
+		bloon = Spawn_Ent(700, 10, 0, 1, 0, bloonSprite2, 2, 50);
 		bloon->think = bloonThink;
 	}
 	else
@@ -120,31 +124,44 @@ void spBloon(int type)
 	
 }
 
-void spBullet(int towerX, int towerY, int dir, int type)
+void spBullet(int towerX, int towerY, int dir, int type) //spawn a bullet at tower's location
 {
 	Entity *bullet;
 	Sprite *bSprite = LoadSprite("images/16_16_16_2sprite.png",16,16);
 	
-	// use dir and vector math to get x and y velocity
+	//hard code x and y velocity based on dir
 	int xVel;
 	int yVel;
-	if (type == 1){
-		if (dir == 0){xVel = 0; yVel = -2;}
-		else if (dir == 45){xVel = 1; yVel = -1;}
-		else if (dir == 90){xVel = 2; yVel = 0;}
-		else if (dir == 135){xVel = 1; yVel = 1;}
-		else if (dir == 180){xVel = 0; yVel = 2;}
-		else if (dir == 225){xVel = -1; yVel = 1;}
-		else if (dir == 270){xVel = -2; yVel = 0;}
-		else if (dir == 315){xVel = -1; yVel = -1;}
-	}
+	
+	if (dir == 0){xVel = 0; yVel = -2;}
+	else if (dir == 45){xVel = 1; yVel = -1;}
+	else if (dir == 90){xVel = 2; yVel = 0;}
+	else if (dir == 135){xVel = 1; yVel = 1;}
+	else if (dir == 180){xVel = 0; yVel = 2;}
+	else if (dir == 225){xVel = -1; yVel = 1;}
+	else if (dir == 270){xVel = -2; yVel = 0;}
+	else if (dir == 315){xVel = -1; yVel = -1;}
+	
+	//add velocity if using bullet type 2
 	if (type == 2){
-		xVel = 0;
-		yVel = -3;
+		xVel *= 2;
+		yVel *= 2;
 	}
-	Spawn_Ent(towerX, towerY, xVel, yVel, dir, bSprite, 1, 40);
+	bullet = Spawn_Ent(towerX, towerY, xVel, yVel, dir, bSprite, 1, 40);
 }
 
+//spawn dummy bullet once for UI
+void spDumb()
+{
+	Entity *dumbBullet;
+	Sprite *dumbSprite = LoadSprite("images/16_16_16_2sprite.png",16,16);
+	dumbBullet = Spawn_Ent(958, 22, 0, 0, 0, dumbSprite, -1, 100);
+
+	dumbBullet->think = dumbThink;
+}
+
+
+//spawn a tower of type 1, 2, 3, or 4
 void spTower(int towerX, int towerY, int dir, int type)
 {
 	int cost;
@@ -169,7 +186,7 @@ void spTower(int towerX, int towerY, int dir, int type)
 /*Entity Think functions*/
 //
 
-void towerThink(Entity *thatEnt)
+void towerThink(Entity *thatEnt) //fire bullets
 {
 	int towerX = thatEnt -> x;
 	int towerY = thatEnt -> y;
@@ -190,7 +207,25 @@ void towerThink(Entity *thatEnt)
 	}
 }
 
-void bloonThink(Entity *thatEnt)
+void dumbThink(Entity *thatEnt) //edit position based on ROTATION variable
+{
+	int dumbx;
+	int dumby;
+	
+	if (ROTATION == 0){dumbx = 958; dumby = 22;}
+	if (ROTATION == 45){dumbx = 974; dumby = 22;}
+	if (ROTATION == 90){dumbx = 974; dumby = 38;}
+	if (ROTATION == 135){dumbx = 974; dumby = 54;}
+	if (ROTATION == 180){dumbx = 958; dumby = 54;}
+	if (ROTATION == 225){dumbx = 942; dumby = 54;}
+	if (ROTATION == 270){dumbx = 942; dumby = 38;}
+	if (ROTATION == 315){dumbx = 942; dumby = 22;}
+
+	thatEnt->x = dumbx;
+	thatEnt->y = dumby;
+}
+
+void bloonThink(Entity *thatEnt) //pathfinding
 {
 	int bloonX = thatEnt -> x;
 	int bloonY = thatEnt -> y;
@@ -210,6 +245,7 @@ void bloonThink(Entity *thatEnt)
 	}
 }
 
+//start a wave based on LEVEL variable
 void startWave(int SpawnRate/*a bigger number is a slower rate, recoomended 15*/, int lvl2mix/*chance out of 10 that a lvl 2 bloon spawns*/, int numBloons)  
 {
 	spr = SpawnRate;
@@ -219,6 +255,47 @@ void startWave(int SpawnRate/*a bigger number is a slower rate, recoomended 15*/
 	waitTime = SpawnRate + (rand()%4) - 2;
 	
 	waveInProg = 1;
+}
+
+void DrawUI() //self explanatory
+{
+	char lvl[40];
+	char econ[45];
+	char lives[10];
+	SDL_Rect R;
+
+	sprintf(lvl, "Level: %d", LEVEL);
+	sprintf(econ, "Resources: %d", ECON);
+	sprintf(lives, "Lives: %d", LIVES);
+
+	
+	R.x = 0;
+	R.y = 0;
+	R.w = 0;
+	R.h = 0;
+
+	if (message != NULL)
+	{
+		SDL_FreeSurface(message);
+	}
+	message = TTF_RenderText_Solid( font, lvl, textColor );
+	SDL_BlitSurface(message, NULL, screen, &R);
+	
+	R.y = 30;
+	if (message != NULL)
+	{
+		SDL_FreeSurface(message);
+	}
+	message = TTF_RenderText_Solid( font, econ, textColor );
+	SDL_BlitSurface(message, NULL, screen, &R);
+	
+	R.y = 60;
+	if (message != NULL)
+	{
+		SDL_FreeSurface(message);
+	}
+	message = TTF_RenderText_Solid( font, lives, textColor );
+	SDL_BlitSurface(message, NULL, screen, &R);
 }
 
 //main update function
@@ -264,20 +341,20 @@ void update()
 						if (Ydist < 0){Ydist = Ydist * -1;}
 
 						tempDist = (Xdist * Xdist) + (Ydist * Ydist);
-						if (tempDist <= 256){tempEnt->colliding = 1; enemy->colliding = 1;}
+						if (tempDist <= 256){   //if colliding
+							tempEnt->health -= 1;
+							enemy->health -= 1;
+							ECON++;
+
+							if(tempEnt->health == 0){Free_Ent(tempEnt);}
+							if(enemy->health == 0){Free_Ent(enemy);}
+						}
 					}
 					q++;
 				}
 			}
 
 			Move_Ent(tempEnt, tempEnt->xVel, tempEnt->yVel); //moves all entities
-
-			//upon colliding, free entity and update economy
-			if (tempEnt->colliding == 1)
-			{
-				if (tempEnt->type == 50) {ECON++;}
-				Free_Ent(tempEnt);
-			}
 
 			//out of bounds detection
 			if(X < -35 || X > 1059) Free_Ent(tempEnt);
